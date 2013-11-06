@@ -6,7 +6,12 @@
 
     <groupId>cn.lichengwu</groupId>
     <artifactId>iMemory</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${iMemory-version}</version>
+
+    <properties>
+        <iMemory-version>1.0-SNAPSHOT</iMemory-version>
+    </properties>
+
     <modules>
         <module>iMemory-core</module>
         <module>iMemory-common</module>
@@ -21,5 +26,49 @@
     <description>iMemory :: parent</description>
     <url>https://github.com/lichengwu/iMemory</url>
     <inceptionYear>2013</inceptionYear>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.lichengwu</groupId>
+                <artifactId>iMemory-core</artifactId>
+                <version>${iMemory-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.lichengwu</groupId>
+                <artifactId>iMemory-common</artifactId>
+                <version>${iMemory-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.lichengwu</groupId>
+                <artifactId>iMemory-cache</artifactId>
+                <version>${iMemory-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.lichengwu</groupId>
+                <artifactId>iMemory-serializer</artifactId>
+                <version>${iMemory-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.lichengwu</groupId>
+                <artifactId>iMemory-server</artifactId>
+                <version>${iMemory-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <target>1.5</target>
+                    <source>1.5</source>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

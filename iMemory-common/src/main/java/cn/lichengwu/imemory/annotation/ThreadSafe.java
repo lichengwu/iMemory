@@ -1,11 +1,18 @@
 package cn.lichengwu.imemory.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * TODO 方法说明
+ * methods or classes tag this annotation must be thread safe.
  *
- * @author 佐井
+ * @author lichengwu
  * @version 1.0
  * @created 2013-11-06 10:52 PM
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface ThreadSafe {
 }
