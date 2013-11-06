@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * methods or classes tag this annotation must be thread safe.
+ * Method or class which tag this annotation must be thread safe.
  *
  * @author lichengwu
  * @version 1.0
