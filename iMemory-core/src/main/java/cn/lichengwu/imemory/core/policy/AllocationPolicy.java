@@ -3,12 +3,11 @@ package cn.lichengwu.imemory.core.policy;
 import cn.lichengwu.imemory.core.allocator.Allocator;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
- * TODO 方法说明
+ * buffer allocation policy
  *
- * @author 佐井
+ * @author lichengwu
  * @version 1.0
  * @created 2013-11-09 5:23 PM
  */
