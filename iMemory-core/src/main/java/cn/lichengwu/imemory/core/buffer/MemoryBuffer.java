@@ -1,5 +1,7 @@
 package cn.lichengwu.imemory.core.buffer;
 
+import cn.lichengwu.imemory.core.Config;
+
 import java.nio.ByteOrder;
 
 /**
@@ -9,7 +11,15 @@ import java.nio.ByteOrder;
  * @version 1.0
  * @created 2013-11-07 10:50 PM
  */
-public interface MemoryBuffer extends ReadableBuffer, WritableBuffer {
+public interface MemoryBuffer {
+
+
+    /**
+     * init the ByteBuffer use the config
+     *
+     * @param config
+     */
+    void init(Config config);
 
     /**
      * @return current memory size in byte
@@ -19,12 +29,7 @@ public interface MemoryBuffer extends ReadableBuffer, WritableBuffer {
     /**
      * @return max size of the memory byte
      */
-    long maximum();
-
-    /**
-     * free memory usage
-     */
-    void free();
+    int maximum();
 
     /**
      * clear memory and reset inner status
@@ -36,20 +41,19 @@ public interface MemoryBuffer extends ReadableBuffer, WritableBuffer {
      *
      * @return return true while the memory is changing, otherwise false.
      */
-    boolean changing();
+//    boolean changing();
 
     /**
      * @return byte order in current memory
-     */
-    ByteOrder getOrder();
-
-    /**
-     * change the memory's byte order
-     *
-     * @param byteOrder new byte order
-     *
      * @see ByteOrder#BIG_ENDIAN
      * @see ByteOrder#LITTLE_ENDIAN
      */
-    void setOrder(ByteOrder byteOrder);
+    ByteOrder getOrder();
+
+
+    int writeBytes(byte[] bytes);
+
+    byte[] readBytes(int index);
+
+    void clear(int index);
 }
