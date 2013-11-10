@@ -1,11 +1,11 @@
 package cn.lichengwu.imemory.core.buffer;
 
 import cn.lichengwu.imemory.core.config.Config;
+import cn.lichengwu.imemory.util.FastIntegerStack;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Stack;
 
 /**
  * Split the space into {@code sliceSize}, it means than every element store in this MemoryBuffer can not bigger than
@@ -20,7 +20,7 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
     private static final byte EMPTY_BYTE = 0;
 
     // a free pointer stack
-    private Stack<Integer> freePointers = new Stack<Integer>();
+    private FastIntegerStack freePointers;
 
     // mark whether the pointer is use.
     // the array's index is pointer and element under index is the flag.
@@ -60,6 +60,7 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
         }
 
         //init free pointers
+        freePointers = new FastIntegerStack(this.maximum / sliceSize);
         for (int i = this.maximum / sliceSize - 1; i >= 0; i--) {
             freePointers.push(i);
         }
