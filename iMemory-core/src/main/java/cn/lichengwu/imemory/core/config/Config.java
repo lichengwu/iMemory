@@ -1,4 +1,4 @@
-package cn.lichengwu.imemory.core;
+package cn.lichengwu.imemory.core.config;
 
 import cn.lichengwu.imemory.core.constant.StorageType;
 

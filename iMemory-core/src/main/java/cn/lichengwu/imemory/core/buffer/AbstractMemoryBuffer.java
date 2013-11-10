@@ -1,6 +1,6 @@
 package cn.lichengwu.imemory.core.buffer;
 
-import cn.lichengwu.imemory.core.Config;
+import cn.lichengwu.imemory.core.config.Config;
 
 /**
  * abstract memory buffer

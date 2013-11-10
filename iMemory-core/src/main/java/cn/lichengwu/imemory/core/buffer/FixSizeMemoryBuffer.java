@@ -1,6 +1,6 @@
 package cn.lichengwu.imemory.core.buffer;
 
-import cn.lichengwu.imemory.core.Config;
+import cn.lichengwu.imemory.core.config.Config;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -16,6 +16,8 @@ import java.util.Stack;
  * @created 2013-11-09 3:16 PM
  */
 public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
+
+    private static final byte EMPTY_BYTE = 0;
 
     // a free pointer stack
     private Stack<Integer> freePointers = new Stack<Integer>();
@@ -112,8 +114,17 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
 
     @Override
     public void clear(int index) {
+
         // give back pointer to the stack
         freePointers.push(index);
+        root.position(index);
+
+        //erase data
+        for (int i = 0; i < sliceSize; i++) {
+            root.put(EMPTY_BYTE);
+        }
+
+        //set capacity
         capacity += sliceSize;
     }
 }

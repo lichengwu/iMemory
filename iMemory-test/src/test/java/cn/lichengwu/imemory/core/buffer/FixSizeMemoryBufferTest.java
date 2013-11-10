@@ -1,12 +1,14 @@
 package cn.lichengwu.imemory.core.buffer;
 
-import cn.lichengwu.imemory.core.Config;
+import cn.lichengwu.imemory.core.config.Config;
 import cn.lichengwu.imemory.core.constant.StorageType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.ByteOrder;
 
 /**
  * base test for {@code FixSizeMemoryBuffer}
@@ -27,7 +29,8 @@ public class FixSizeMemoryBufferTest {
     public void setUp() {
         config = new Config();
 
-        config.setMaximum(1024).setSliceSize(16).setStorageType(StorageType.DIRECT);
+        config.setMaximum(1024).setSliceSize(16).setStorageType(StorageType.DIRECT)
+                .setByteOrder(ByteOrder.LITTLE_ENDIAN);
 
         buffer = new FixSizeMemoryBuffer();
         buffer.init(config);
