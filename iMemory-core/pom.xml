@@ -12,5 +12,11 @@
     <artifactId>iMemory-core</artifactId>
     <name>iMemory :: core</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.lichengwu</groupId>
+            <artifactId>iMemory-common</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

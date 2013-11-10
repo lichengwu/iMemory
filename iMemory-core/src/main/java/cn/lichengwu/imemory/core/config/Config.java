@@ -13,6 +13,8 @@ import java.nio.ByteOrder;
  */
 public class Config {
 
+    private static final int DEFAULT_CONCURRENT_LEVEL = 8;
+
     /**
      * @see ByteOrder
      */
@@ -33,6 +35,10 @@ public class Config {
      */
     private StorageType storageType;
 
+    /**
+     * concurrent level for multi-thread access
+     */
+    private int concurrentLevel = DEFAULT_CONCURRENT_LEVEL;
 
 
     public StorageType getStorageType() {
@@ -68,6 +74,15 @@ public class Config {
 
     public Config setStorageType(StorageType storageType) {
         this.storageType = storageType;
+        return this;
+    }
+
+    public int getConcurrentLevel() {
+        return concurrentLevel;
+    }
+
+    public Config setConcurrentLevel(int concurrentLevel) {
+        this.concurrentLevel = concurrentLevel;
         return this;
     }
 }

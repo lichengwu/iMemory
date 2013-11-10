@@ -41,7 +41,7 @@ public interface MemoryBuffer {
      *
      * @return return true while the memory is changing, otherwise false.
      */
-//    boolean changing();
+    //    boolean changing();
 
     /**
      * @return byte order in current memory
@@ -51,9 +51,28 @@ public interface MemoryBuffer {
     ByteOrder getOrder();
 
 
+    /**
+     * write bytes to memory
+     *
+     * @param bytes
+     *
+     * @return the data offset in storage
+     */
     int writeBytes(byte[] bytes);
 
+    /**
+     * read byte under index
+     *
+     * @param index the data offset in storage
+     *
+     * @return the value under the index or null if the index isn't be used.
+     */
     byte[] readBytes(int index);
 
+    /**
+     * clear data from storage associate whit index
+     *
+     * @param index
+     */
     void clear(int index);
 }

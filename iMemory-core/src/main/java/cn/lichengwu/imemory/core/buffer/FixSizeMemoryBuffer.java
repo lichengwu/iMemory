@@ -60,7 +60,7 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
         }
 
         //init free pointers
-        for (int i = this.maximum / sliceSize; i > 0; i--) {
+        for (int i = this.maximum / sliceSize - 1; i >= 0; i--) {
             freePointers.push(i);
         }
 
@@ -104,12 +104,15 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
 
     @Override
     public byte[] readBytes(int index) {
-        // set position
-        root.position(index);
-        byte[] buffs = new byte[sliceSize];
-        // read
-        root.get(buffs);
-        return buffs;
+        if (flags[index]) {
+            // set position
+            root.position(index);
+            byte[] buffs = new byte[sliceSize];
+            // read
+            root.get(buffs);
+            return buffs;
+        }
+        return null;
     }
 
     @Override
@@ -123,7 +126,8 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
         for (int i = 0; i < sliceSize; i++) {
             root.put(EMPTY_BYTE);
         }
-
+        // set used
+        flags[index] = false;
         //set capacity
         capacity += sliceSize;
     }
