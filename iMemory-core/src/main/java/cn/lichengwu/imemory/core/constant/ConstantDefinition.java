@@ -7,9 +7,9 @@ package cn.lichengwu.imemory.core.constant;
  * @version 1.0
  * @created 2013-11-10 11:49 AM
  */
-public interface ConstantDefination {
+public interface ConstantDefinition {
 
-    public int getCode();
+    public int getCodConstantDefinatione();
 
     public String getName();
 }

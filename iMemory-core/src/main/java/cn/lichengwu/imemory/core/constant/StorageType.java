@@ -7,7 +7,7 @@ package cn.lichengwu.imemory.core.constant;
  * @version 1.0
  * @created 2013-11-10 11:48 AM
  */
-public enum StorageType implements ConstantDefination {
+public enum StorageType implements ConstantDefinition {
 
     DIRECT(1, "direct memory"),
     HEAP(2, "heap memory"),

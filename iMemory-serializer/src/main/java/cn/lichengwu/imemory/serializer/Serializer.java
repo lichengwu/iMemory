@@ -2,6 +2,8 @@ package cn.lichengwu.imemory.serializer;
 
 import cn.lichengwu.imemory.annotation.ThreadSafe;
 
+import java.io.Closeable;
+
 /**
  * Declare serialize and deserialize method.
  * All implements must thread safe.
@@ -12,7 +14,7 @@ import cn.lichengwu.imemory.annotation.ThreadSafe;
  */
 
 @ThreadSafe
-public interface Serializer {
+public interface Serializer extends Closeable {
 
     /**
      * serialize java object to byte array.

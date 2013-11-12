@@ -18,6 +18,10 @@
             <groupId>cn.lichengwu</groupId>
             <artifactId>iMemory-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
