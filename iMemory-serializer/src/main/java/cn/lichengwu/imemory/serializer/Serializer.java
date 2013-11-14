@@ -3,6 +3,7 @@ package cn.lichengwu.imemory.serializer;
 import cn.lichengwu.imemory.annotation.ThreadSafe;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Declare serialize and deserialize method.
@@ -24,7 +25,7 @@ public interface Serializer extends Closeable {
      *
      * @return byte array
      */
-    <T> byte[] serialize(T obj);
+    <T> byte[] serialize(T obj) throws IOException;
 
     /**
      * unfreeze java object from byte array
@@ -35,6 +36,6 @@ public interface Serializer extends Closeable {
      *
      * @return
      */
-    <T> T deserialize(byte[] source, Class<T> clazz);
+    <T> T deserialize(byte[] source, Class<T> clazz) throws IOException;
 
 }

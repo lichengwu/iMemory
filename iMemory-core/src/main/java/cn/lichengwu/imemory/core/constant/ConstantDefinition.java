@@ -9,7 +9,7 @@ package cn.lichengwu.imemory.core.constant;
  */
 public interface ConstantDefinition {
 
-    public int getCodConstantDefinatione();
+    public int getCode();
 
     public String getName();
 }

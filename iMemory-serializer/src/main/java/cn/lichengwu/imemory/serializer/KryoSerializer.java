@@ -22,8 +22,12 @@ public class KryoSerializer implements Serializer {
 
     private KryoPool pool;
 
-    public KryoSerializer() {
+    private KryoSerializer() {
         this.pool = new KryoPool();
+    }
+
+    public static KryoSerializer getInstance() {
+        return InstanceHolder.INSTANCE;
     }
 
     @Override
@@ -111,5 +115,9 @@ public class KryoSerializer implements Serializer {
             this.kryo = kryo;
             this.output = new Output(BUFFER_SIZE, -1);
         }
+    }
+
+    private static class InstanceHolder {
+        static final KryoSerializer INSTANCE = new KryoSerializer();
     }
 }
