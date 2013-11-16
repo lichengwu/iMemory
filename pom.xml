@@ -10,12 +10,13 @@
 
     <properties>
         <iMemory-version>1.0-SNAPSHOT</iMemory-version>
-        <java.version>1.5</java.version>
+        <java.version>1.6</java.version>
         <junit.version>4.11</junit.version>
         <log4j.version>1.2.16</log4j.version>
         <org.slf4j-version>1.7.5</org.slf4j-version>
         <kryo.version>2.21</kryo.version>
         <msgpack.version>0.6.8</msgpack.version>
+        <hessian.version>4.0.33</hessian.version>
     </properties>
 
     <modules>
@@ -103,6 +104,12 @@
                 <artifactId>msgpack</artifactId>
                 <version>${msgpack.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.caucho</groupId>
+                <artifactId>hessian</artifactId>
+                <version>${hessian.version}</version>
+            </dependency>
+
 
 
         </dependencies>

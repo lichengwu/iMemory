@@ -24,7 +24,7 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
 
     // mark whether the pointer is use.
     // the array's index is pointer and element under index is the flag.
-    private boolean[] flags;
+    private volatile boolean[] flags;
 
     // root ByteBuffer for allocation
     private ByteBuffer root;
@@ -53,7 +53,7 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
         this.maximum = config.getMaximum();
         this.capacity = maximum();
 
-        this.flags = new boolean[config.getMaximum()];
+        this.flags = new boolean[this.maximum / sliceSize + 1];
         // set byte order if exists
         if (config.getByteOrder() != null) {
             root.order(config.getByteOrder());
@@ -100,14 +100,14 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
         flags[index] = true;
         // set capacity
         this.capacity -= sliceSize;
-        return offset;
+        return index;
     }
 
     @Override
     public byte[] readBytes(int index) {
         if (flags[index]) {
             // set position
-            root.position(index);
+            root.position(index * sliceSize);
             byte[] buffs = new byte[sliceSize];
             // read
             root.get(buffs);

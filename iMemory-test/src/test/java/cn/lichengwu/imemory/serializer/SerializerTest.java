@@ -4,6 +4,7 @@ import cn.lichengwu.imemory.pojo.SimpleObject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -15,7 +16,7 @@ public class SerializerTest {
 
 
     @Test
-    public void testKryo() {
+    public void testKryo() throws IOException {
         Serializer serializer = KryoSerializer.getInstance();
 
         SimpleObject object = new SimpleObject();
@@ -37,5 +38,11 @@ public class SerializerTest {
 
         Assert.assertEquals(deserialize, object);
 
+    }
+
+    @Test
+    public void test() throws IOException {
+        Serializer serializer = KryoSerializer.getInstance();
+        System.out.println(serializer.serialize(Long.valueOf(Long.valueOf("132"))).length);
     }
 }

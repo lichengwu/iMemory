@@ -11,9 +11,9 @@ import cn.lichengwu.imemory.core.config.Config;
  */
 public abstract class AbstractMemoryBuffer implements MemoryBuffer {
 
-    protected int capacity;
+    protected volatile int capacity;
 
-    protected int maximum;
+    protected volatile int maximum;
 
     @Override
     public long capacity() {

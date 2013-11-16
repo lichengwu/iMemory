@@ -1,6 +1,8 @@
 package cn.lichengwu.imemory.core.config;
 
 import cn.lichengwu.imemory.core.constant.StorageType;
+import cn.lichengwu.imemory.serializer.KryoSerializer;
+import cn.lichengwu.imemory.serializer.Serializer;
 
 import java.nio.ByteOrder;
 
@@ -39,6 +41,11 @@ public class Config {
      * concurrent level for multi-thread access
      */
     private int concurrentLevel = DEFAULT_CONCURRENT_LEVEL;
+
+    /**
+     * serializer
+     */
+    private Serializer serializer = KryoSerializer.getInstance();
 
 
     public StorageType getStorageType() {
@@ -84,5 +91,13 @@ public class Config {
     public Config setConcurrentLevel(int concurrentLevel) {
         this.concurrentLevel = concurrentLevel;
         return this;
+    }
+
+    public Serializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
     }
 }

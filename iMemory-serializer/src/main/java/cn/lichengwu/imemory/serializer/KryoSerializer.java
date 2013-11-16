@@ -41,7 +41,10 @@ public class KryoSerializer implements Serializer {
             kryoHolder.kryo.register(clazz);
 
             kryoHolder.kryo.writeObject(kryoHolder.output, obj);
-            return kryoHolder.output.toBytes();
+            byte[] bytes = kryoHolder.output.toBytes();
+            //reuse
+            kryoHolder.output.clear();
+            return bytes;
         } finally {
             if (kryoHolder != null) {
                 pool.done(kryoHolder);

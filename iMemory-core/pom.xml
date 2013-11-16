@@ -17,6 +17,11 @@
             <groupId>cn.lichengwu</groupId>
             <artifactId>iMemory-common</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>cn.lichengwu</groupId>
+            <artifactId>iMemory-serializer</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

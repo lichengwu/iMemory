@@ -59,13 +59,14 @@ public class MemoryManager {
     public long insert(byte[] bytes) {
         //get segment index
         int segmentIndex = getNextSegmentIndex();
-        segmentLocks[segmentIndex].tryLock();
+        Lock lock = segmentLocks[segmentIndex];
+        lock.lock();
         try {
             int pointer = memoryBufferSegments[segmentIndex].writeBytes(bytes);
             //compress segment index and pointer to one long
             return PrimaryTypeUtil.combineToLong(segmentIndex, pointer);
         } finally {
-            segmentLocks[segmentIndex].unlock();
+            lock.unlock();
         }
     }
 
