@@ -11,7 +11,8 @@ public enum StorageType implements ConstantDefinition {
 
     DIRECT(1, "direct memory"),
     HEAP(2, "heap memory"),
-    DISK(3, "disk");
+    DISK(3, "disk"),
+    UNSAFE(4,"sun.misc.Unsafe");
 
     private StorageType(int code, String name) {
         this.code = code;

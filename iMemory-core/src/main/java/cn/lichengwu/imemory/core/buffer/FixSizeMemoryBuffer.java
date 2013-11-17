@@ -20,44 +20,29 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
     private static final byte EMPTY_BYTE = 0;
 
     // a free pointer stack
-    private FastIntegerStack freePointers;
+    private volatile FastIntegerStack freePointers;
 
     // mark whether the pointer is use.
     // the array's index is pointer and element under index is the flag.
     private volatile boolean[] flags;
 
     // root ByteBuffer for allocation
-    private ByteBuffer root;
+    private volatile ByteBuffer root;
 
     // the size of every piece
-    private int sliceSize;
+    private volatile int sliceSize;
 
     @Override
     public void init(Config config) {
-        checkConfig(config);
-        switch (config.getStorageType()) {
-            case HEAP:
-                root = ByteBuffer.allocate(config.getMaximum());
-                break;
-            case DIRECT:
-                root = ByteBuffer.allocateDirect(config.getMaximum());
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getStorageType().toString());
-        }
+
+        super.init(config);
 
         if (config.getSliceSize() <= 0) {
             throw new IllegalArgumentException("slice size must greater then 0");
         }
         this.sliceSize = config.getSliceSize();
-        this.maximum = config.getMaximum();
-        this.capacity = maximum();
 
         this.flags = new boolean[this.maximum / sliceSize + 1];
-        // set byte order if exists
-        if (config.getByteOrder() != null) {
-            root.order(config.getByteOrder());
-        }
 
         //init free pointers
         freePointers = new FastIntegerStack(this.maximum / sliceSize);

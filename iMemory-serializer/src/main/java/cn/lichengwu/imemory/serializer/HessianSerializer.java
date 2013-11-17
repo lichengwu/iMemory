@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * A serializer using {@linkplain Hessian} lib.
  *
- * @author 佐井
+ * @author lichengwu
  * @version 1.0
  * @created 2013-11-16 2:48 PM
  */

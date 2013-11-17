@@ -58,13 +58,13 @@ public class DefaultMemoryServiceTest {
         while (exec.getActiveCount() != 0) {
             TimeUnit.SECONDS.sleep(1);
         }
-//
-//        for (long k = 0; k <  size; k++) {
-//            memoryService.put(String.valueOf(k), k);
-//        }
 
         for (Long i = 0L; i < size; i++) {
             Assert.assertEquals(memoryService.get(String.valueOf(i)), i);
+        }
+
+        for (Long i = 0L; i < size; i++) {
+            Assert.assertEquals(memoryService.del(String.valueOf(i.toString())), i);
         }
     }
 }

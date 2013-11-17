@@ -37,13 +37,6 @@ public interface MemoryBuffer {
     void clear();
 
     /**
-     * tell the memory's current status
-     *
-     * @return return true while the memory is changing, otherwise false.
-     */
-    //    boolean changing();
-
-    /**
      * @return byte order in current memory
      * @see ByteOrder#BIG_ENDIAN
      * @see ByteOrder#LITTLE_ENDIAN
