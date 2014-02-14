@@ -9,10 +9,11 @@ import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+
 /**
  * A serializer using {@linkplain Kryo} lib.
  *
- * @author lichengwu
+ * @author 佐井
  * @version 1.0
  * @created 2013-11-12 10:35 PM
  */
@@ -30,21 +31,17 @@ public class KryoSerializer implements Serializer {
         return InstanceHolder.INSTANCE;
     }
 
-    @Override
     public <T> byte[] serialize(T obj) {
         Class<?> clazz = obj.getClass();
 
         KryoHolder kryoHolder = null;
         try {
             kryoHolder = pool.get();
-            kryoHolder.kryo.reset();
+            kryoHolder.reset();
             kryoHolder.kryo.register(clazz);
 
             kryoHolder.kryo.writeObject(kryoHolder.output, obj);
-            byte[] bytes = kryoHolder.output.toBytes();
-            //reuse
-            kryoHolder.output.clear();
-            return bytes;
+            return kryoHolder.output.toBytes();
         } finally {
             if (kryoHolder != null) {
                 pool.done(kryoHolder);
@@ -52,13 +49,11 @@ public class KryoSerializer implements Serializer {
         }
     }
 
-    @Override
     public <T> T deserialize(byte[] source, Class<T> clazz) {
         KryoHolder kryoHolder = null;
         try {
             kryoHolder = pool.get();
             kryoHolder.kryo.register(clazz);
-
             Input input = new Input(source);
             return kryoHolder.kryo.readObject(input, clazz);
         } finally {
@@ -71,7 +66,7 @@ public class KryoSerializer implements Serializer {
     /**
      * clear cached Kryo
      *
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public void close() throws IOException {
         pool.close();
@@ -88,7 +83,9 @@ public class KryoSerializer implements Serializer {
             KryoHolder kryoHolder = pool.poll();
             if (kryoHolder == null) {
                 Kryo kryo = new Kryo();
-                kryo.setReferences(false);
+                //解决循环引用问题
+                kryo.setReferences(true);
+                //解决构造函数问题
                 kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
                 kryoHolder = new KryoHolder(kryo);
             }
@@ -117,6 +114,12 @@ public class KryoSerializer implements Serializer {
         KryoHolder(Kryo kryo) {
             this.kryo = kryo;
             this.output = new Output(BUFFER_SIZE, -1);
+        }
+
+        public void reset() {
+            if (output != null) {
+                output.clear();
+            }
         }
     }
 
