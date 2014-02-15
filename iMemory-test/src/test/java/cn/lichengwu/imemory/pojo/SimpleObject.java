@@ -1,5 +1,8 @@
 package cn.lichengwu.imemory.pojo;
 
+import org.msgpack.annotation.Message;
+
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -7,7 +10,10 @@ import java.util.Map;
  * @version 1.0
  * @created 2013-11-14 9:55 PM
  */
-public class SimpleObject {
+@Message
+public class SimpleObject implements Serializable {
+
+    private static final long serialVersionUID = -2628490795076341668L;
 
     private int intField;
 

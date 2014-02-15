@@ -4,7 +4,6 @@ import cn.lichengwu.imemory.core.config.Config;
 import cn.lichengwu.imemory.util.FastIntegerStack;
 
 import java.nio.BufferOverflowException;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
@@ -25,9 +24,6 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
     // mark whether the pointer is use.
     // the array's index is pointer and element under index is the flag.
     private volatile boolean[] flags;
-
-    // root ByteBuffer for allocation
-    private volatile ByteBuffer root;
 
     // the size of every piece
     private volatile int sliceSize;
