@@ -51,7 +51,7 @@ public class DefaultMemoryServiceTest {
     public void test() {
         try {
             // merge
-            //            testByStoragePolicy(StoragePolicy.MERGE);
+            testByStoragePolicy(StoragePolicy.MERGE);
             // fix size
             testByStoragePolicy(StoragePolicy.FIX_SIZE);
         } catch (Throwable e) {
