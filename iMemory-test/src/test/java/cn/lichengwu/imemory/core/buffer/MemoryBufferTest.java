@@ -17,9 +17,9 @@ import java.nio.ByteOrder;
  * @version 1.0
  * @created 2013-11-10 12:58 PM
  */
-public class FixSizeMemoryBufferTest {
+public class MemoryBufferTest {
 
-    private static final Logger log = LoggerFactory.getLogger(FixSizeMemoryBufferTest.class);
+    private static final Logger log = LoggerFactory.getLogger(MemoryBufferTest.class);
 
     MemoryBuffer buffer;
 

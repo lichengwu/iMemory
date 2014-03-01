@@ -13,7 +13,7 @@ import java.util.*;
  * @version 1.0
  * @created 2013-11-17 7:43 PM
  */
-public class MergingMemroyBuffer extends AbstractMemoryBuffer {
+public class MergingMemoryBuffer extends AbstractMemoryBuffer {
 
     private static final int DEFAULT_MIN_SIZE_THRESHOLD = 64;
 
