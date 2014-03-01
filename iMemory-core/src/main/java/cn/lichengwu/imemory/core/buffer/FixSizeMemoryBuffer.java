@@ -16,8 +16,6 @@ import java.nio.ByteOrder;
  */
 public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
 
-    private static final byte EMPTY_BYTE = 0;
-
     // a free pointer stack
     private volatile FastIntegerStack freePointers;
 
