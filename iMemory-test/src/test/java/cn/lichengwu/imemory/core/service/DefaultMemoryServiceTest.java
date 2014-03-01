@@ -143,6 +143,8 @@ public class DefaultMemoryServiceTest {
         }
         exec.shutdown();
 
+        Assert.assertEquals(memoryService.size(), SIZE);
+
         //3. get
         for (int i = 0; i < SIZE; i++) {
             String key = String.valueOf(i);
@@ -154,6 +156,7 @@ public class DefaultMemoryServiceTest {
         for (int i = 0; i < SIZE; i++) {
             String key = String.valueOf(i);
             Assert.assertEquals(memoryService.del(key), objectMap.get(key));
+            Assert.assertEquals(memoryService.size(), SIZE - i - 1);
         }
 
         Assert.assertEquals(memoryService.capacity(), config.getRealMaximum());
