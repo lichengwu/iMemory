@@ -69,7 +69,7 @@ public class DefaultMemoryServiceTest {
                 memoryService.clear();
             }
             config = new Config();
-            config.setMaximum(100 * 1024 * 1024).setSliceSize(200).setStorageType(StorageType.DIRECT)
+            config.setMaximum(1024 * 1024).setSliceSize(200).setStorageType(StorageType.DIRECT)
                     .setByteOrder(ByteOrder.LITTLE_ENDIAN).setStoragePolicy(StoragePolicy.FIX_SIZE);
             memoryService = new DefaultMemoryService<>(config, SimpleObject.class);
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class DefaultMemoryServiceTest {
                 memoryService.clear();
             }
             config = new Config();
-            config.setMaximum(100 * 1024 * 1024).setStorageType(StorageType.DIRECT)
+            config.setMaximum(1024 * 1024).setStorageType(StorageType.DIRECT)
                     .setByteOrder(ByteOrder.LITTLE_ENDIAN).setStoragePolicy(StoragePolicy.MERGE);
             memoryService = new DefaultMemoryService<>(config, SimpleObject.class);
         } catch (Exception e) {
