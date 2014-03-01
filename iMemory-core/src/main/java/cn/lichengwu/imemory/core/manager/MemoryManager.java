@@ -95,7 +95,7 @@ public class MemoryManager {
         segmentLocks[segmentIndex].tryLock();
         try {
             int pointer = PrimaryTypeUtil.getLongEndian(key, false);
-            memoryBufferSegments[segmentIndex].clear(pointer);
+//            memoryBufferSegments[segmentIndex].clear(pointer);
         } finally {
             segmentLocks[segmentIndex].unlock();
         }
