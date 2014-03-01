@@ -1,10 +1,12 @@
 package cn.lichengwu.imemory.core.config;
 
+import cn.lichengwu.imemory.core.constant.StoragePolicy;
 import cn.lichengwu.imemory.core.constant.StorageType;
 import cn.lichengwu.imemory.serializer.KryoSerializer;
 import cn.lichengwu.imemory.serializer.Serializer;
 
 import java.nio.ByteOrder;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Config for iMemory
@@ -36,6 +38,11 @@ public class Config {
      * inner storage type
      */
     private StorageType storageType;
+
+    /**
+     * inner storage policy
+     */
+    private StoragePolicy storagePolicy = StoragePolicy.MERGE;
 
     /**
      * concurrent level for multi-thread access
@@ -97,7 +104,17 @@ public class Config {
         return serializer;
     }
 
-    public void setSerializer(Serializer serializer) {
+    public Config setSerializer(Serializer serializer) {
         this.serializer = serializer;
+        return this;
+    }
+
+    public StoragePolicy getStoragePolicy() {
+        return storagePolicy;
+    }
+
+    public Config setStoragePolicy(StoragePolicy storagePolicy) {
+        this.storagePolicy = storagePolicy;
+        return this;
     }
 }

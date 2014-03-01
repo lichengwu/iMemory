@@ -17,7 +17,11 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
 
     private static final int DEFAULT_MIN_SIZE_THRESHOLD = 64;
 
+    // mark the Link as empty
     private static final int EMPTY_LENGTH = -1;
+
+    // mask the Link as removed
+    private static final int REMOVED = -2;
 
     /**
      * use for init free size rang.
@@ -37,7 +41,10 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
     private int minSizeThreshold = DEFAULT_MIN_SIZE_THRESHOLD;
 
     // Allowed size ratio (requested size / buffer's size) of the returned buffer before splitting
-    private static final double DEFAULT_SIZE_RATIO_THRESHOLD = 0.9;
+    private static final int DEFAULT_SIZE_RATIO_THRESHOLD = 90;
+
+    // a mark to last link
+    private volatile Link lastLink = new Link(-1, -1, null, null);
 
 
     @Override
@@ -47,6 +54,8 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
         for (int size : generateFreeRange(config.getMaximum())) {
             freeMap.put(size, new LinkedList<Link>());
         }
+        // for huge size free memory
+        freeMap.put(Integer.MAX_VALUE, new LinkedList<Link>());
         // init first buffer
         initFirstBuffer();
     }
@@ -67,30 +76,45 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
     public int writeBytes(byte[] bytes) {
         int requiredSize = bytes.length;
         // get links which length greater than or equal bytes.length
-        SortedMap<Integer, LinkedList<Link>> tailMap = freeMap.tailMap(requiredSize);
+        SortedMap<Integer, LinkedList<Link>> tailMap = freeMap.tailMap(requiredSize, true);
+        int position = root.position();
         // find from free space
-        for (Collection<Link> links : tailMap.values()) {
-            for (Link link : links) {
+        for (LinkedList<Link> links : tailMap.values()) {
+            for (Iterator<Link> itr = links.iterator(); itr.hasNext(); ) {
+                Link link = itr.next();
+                if (link.length < 0) {
+                    itr.remove();
+                    continue;
+                }
                 if (link.length >= requiredSize) {
+                    itr.remove();
+                    //change to new size
                     splitIfNeeded(link, requiredSize);
-                    root.put(bytes, link.position, requiredSize);
+                    link.length = requiredSize;
+                    root.position(link.position);
+                    root.put(bytes);
+                    //restore position
+                    root.position(position);
                     usedMap.put(link.position, link);
+                    this.capacity -= requiredSize;
                     return link.position;
                 }
             }
         }
         //can not find suitable free space in freeMap
-        int position = root.position();
         if (root.remaining() < requiredSize) {
             throw new BufferOverflowException();
         }
         //put into new position
         root.put(bytes);
         //new link
-        Link lastLink = freeMap.lastEntry().getValue().getLast();
-        Link link = new Link(position, requiredSize, lastLink, null);
-        lastLink.next = link;
+        Link link = new Link(position, requiredSize, lastLink.previous, lastLink);
+        // update last link
+        lastLink.previous.next = link;
+        lastLink.previous = link;
+        lastLink.position = root.position();
         usedMap.put(position, link);
+        this.capacity -= requiredSize;
         return position;
     }
 
@@ -101,28 +125,38 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
      * @param requiredSize
      */
     private void splitIfNeeded(Link link, int requiredSize) {
-        if (link.length > minSizeThreshold && (requiredSize / link.length) < DEFAULT_SIZE_RATIO_THRESHOLD) {
+        //this link's size
+        int length = link.next.position - link.position;
+        if (length > minSizeThreshold && (requiredSize * 100 / length) < DEFAULT_SIZE_RATIO_THRESHOLD) {
             Link split = new Link(link.position + requiredSize, EMPTY_LENGTH, link, link.next);
             link.next = split;
-            giveBackFreeLink(split);
+            giveBackToFreeLink(split);
         }
     }
 
     @Override
     public byte[] readBytes(int index) {
         Link link = usedMap.get(index);
-        if (link == null || link.length == EMPTY_LENGTH) {
+        if (link == null || link.length < 0) {
             return null;
         }
         byte[] bytes = new byte[link.length];
-        root.get(bytes, link.position, link.length);
+        // back up position
+        int position = root.position();
+        root.position(link.position);
+        root.get(bytes);
+        // restore position
+        root.position(position);
         return bytes;
     }
 
     @Override
     public void clear(int index) {
         Link link = usedMap.remove(index);
-        giveBackFreeLink(link);
+        if (link != null) {
+            this.capacity += link.length;
+            giveBackToFreeLink(link);
+        }
     }
 
     /**
@@ -153,15 +187,18 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
      */
     private void initFirstBuffer() {
         root.clear();
-        Link firstLink = new Link(0, this.minSizeThreshold, null, null);
-        getFreeLinkCollection(firstLink).add(firstLink);
+        root.position(this.minSizeThreshold);
+        Link firstLink = new Link(0, this.minSizeThreshold, null, lastLink);
+        this.lastLink.previous = firstLink;
+        this.lastLink.position = this.minSizeThreshold;
+        getFreeLinkCollection(firstLink.length - 1).add(firstLink);
     }
 
-    private Collection<Link> getFreeLinkCollection(final Link link) {
-        final int size = link.length - 1;
-        return getFreeLinkCollection(size);
-    }
-
+    /**
+     * get free Line from free map by size
+     *
+     * @param size required min size
+     */
     private Collection<Link> getFreeLinkCollection(final int size) {
         return freeMap.ceilingEntry(size).getValue();
     }
@@ -171,10 +208,35 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
      *
      * @param link
      */
-    private void giveBackFreeLink(Link link) {
-        // insert
-        freeMap.floorEntry(link.length - 1).getValue().add(link);
+    private void giveBackToFreeLink(Link link) {
+        // merge left and right
+        Link previous = link.previous;
+        Link next = link.next;
+
+        // merge just mark as removed
+        if (previous != null && previous.length == EMPTY_LENGTH && next != lastLink &&
+                next.length == EMPTY_LENGTH) {
+            previous.length = REMOVED;
+            next.length = REMOVED;
+            link.position = previous.position;
+            link.next = next.next;
+            link.length = next.next.position - previous.position;
+        }
+        // merge left
+        else if (previous != null && previous.length == EMPTY_LENGTH) {
+            previous.length = REMOVED;
+            link.previous = previous.previous;
+            link.length = next.position - previous.position;
+        }
+        // merge right
+        else if (next != lastLink && next.length == EMPTY_LENGTH) {
+            next.length = REMOVED;
+            link.next = next.next;
+            link.length = next.next.position - link.position;
+        }
         // mark as empty
+        // insert
+        freeMap.ceilingEntry(link.length).getValue().add(link);
         link.length = EMPTY_LENGTH;
     }
 
@@ -186,8 +248,8 @@ public class MergingMemoryBuffer extends AbstractMemoryBuffer {
         int position;
         // data's length
         int length;
-        Link previous;
-        Link next;
+        volatile Link previous;
+        volatile Link next;
 
         private Link(int position, int length, Link previous, Link next) {
             this.position = position;

@@ -3,6 +3,7 @@ package cn.lichengwu.imemory.core.manager;
 import cn.lichengwu.imemory.annotation.ThreadSafe;
 import cn.lichengwu.imemory.core.buffer.FixSizeMemoryBuffer;
 import cn.lichengwu.imemory.core.buffer.MemoryBuffer;
+import cn.lichengwu.imemory.core.buffer.MergingMemoryBuffer;
 import cn.lichengwu.imemory.core.config.Config;
 import cn.lichengwu.imemory.util.PrimaryTypeUtil;
 
@@ -43,7 +44,17 @@ public class MemoryManager {
             //new lock
             segmentLocks[i] = new ReentrantLock();
             // new MemoryBuffer
-            FixSizeMemoryBuffer buffer = new FixSizeMemoryBuffer();
+            MemoryBuffer buffer;
+            switch (config.getStoragePolicy()) {
+                case FIX_SIZE:
+                    buffer = new FixSizeMemoryBuffer();
+                    break;
+                case MERGE:
+                    buffer = new MergingMemoryBuffer();
+                    break;
+                default:
+                    buffer = null;
+            }
             buffer.init(config);
             memoryBufferSegments[i] = buffer;
         }
@@ -87,6 +98,27 @@ public class MemoryManager {
     }
 
     /**
+     * read data with the given key and then remove the k-v
+     *
+     * @param key
+     *
+     * @return the data associate whit the given key
+     */
+    public byte[] readAndDelete(long key) {
+        int segmentIndex = PrimaryTypeUtil.getLongEndian(key, true);
+        segmentLocks[segmentIndex].tryLock();
+        try {
+            int pointer = PrimaryTypeUtil.getLongEndian(key, false);
+            MemoryBuffer segment = memoryBufferSegments[segmentIndex];
+            byte[] data = segment.readBytes(pointer);
+            segment.clear(pointer);
+            return data;
+        } finally {
+            segmentLocks[segmentIndex].unlock();
+        }
+    }
+
+    /**
      * get data from memory by key
      *
      * @param key a long which compress segment index(int) and pointer(int) together
@@ -99,49 +131,49 @@ public class MemoryManager {
         return memoryBufferSegments[segmentIndex].readBytes(pointer);
     }
 
-    /**
-     * update key's value in memory
-     *
-     * @param key
-     * @param newValue
-     *
-     * @return old byte array
-     */
-    public byte[] update(long key, byte[] newValue) {
-        int segmentIndex = PrimaryTypeUtil.getLongEndian(key, true);
-        segmentLocks[segmentIndex].tryLock();
-        try {
-            MemoryBuffer currentSegment = memoryBufferSegments[segmentIndex];
-            int pointer = PrimaryTypeUtil.getLongEndian(key, false);
-            byte[] oldValue = currentSegment.readBytes(pointer);
-            currentSegment.clear(pointer);
-            currentSegment.writeBytes(newValue);
-            return oldValue;
-        } finally {
-            segmentLocks[segmentIndex].unlock();
-        }
-    }
+    //    /**
+    //     * update key's value in memory
+    //     *
+    //     * @param key
+    //     * @param newValue
+    //     *
+    //     * @return old byte array
+    //     */
+    //    public byte[] update(long key, byte[] newValue) {
+    //        int segmentIndex = PrimaryTypeUtil.getLongEndian(key, true);
+    //        segmentLocks[segmentIndex].tryLock();
+    //        try {
+    //            MemoryBuffer currentSegment = memoryBufferSegments[segmentIndex];
+    //            int pointer = PrimaryTypeUtil.getLongEndian(key, false);
+    //            byte[] oldValue = currentSegment.readBytes(pointer);
+    //            currentSegment.clear(pointer);
+    //            currentSegment.writeBytes(newValue);
+    //            return oldValue;
+    //        } finally {
+    //            segmentLocks[segmentIndex].unlock();
+    //        }
+    //    }
 
-    /**
-     * update without read old value.
-     * </p>
-     * faster than {@linkplain #update(long, byte[])}
-     *
-     * @param key
-     * @param newValue
-     */
-    public void fastUpdate(long key, byte[] newValue) {
-        int segmentIndex = PrimaryTypeUtil.getLongEndian(key, true);
-        segmentLocks[segmentIndex].tryLock();
-        try {
-            MemoryBuffer currentSegment = memoryBufferSegments[segmentIndex];
-            int pointer = PrimaryTypeUtil.getLongEndian(key, false);
-            currentSegment.clear(pointer);
-            currentSegment.writeBytes(newValue);
-        } finally {
-            segmentLocks[segmentIndex].unlock();
-        }
-    }
+    //    /**
+    //     * update without read old value.
+    //     * </p>
+    //     * faster than {@linkplain #update(long, byte[])}
+    //     *
+    //     * @param key
+    //     * @param newValue
+    //     */
+    //    public void fastUpdate(long key, byte[] newValue) {
+    //        int segmentIndex = PrimaryTypeUtil.getLongEndian(key, true);
+    //        segmentLocks[segmentIndex].tryLock();
+    //        try {
+    //            MemoryBuffer currentSegment = memoryBufferSegments[segmentIndex];
+    //            int pointer = PrimaryTypeUtil.getLongEndian(key, false);
+    //            currentSegment.clear(pointer);
+    //            currentSegment.writeBytes(newValue);
+    //        } finally {
+    //            segmentLocks[segmentIndex].unlock();
+    //        }
+    //    }
 
     /**
      * @return the capacity of the manager

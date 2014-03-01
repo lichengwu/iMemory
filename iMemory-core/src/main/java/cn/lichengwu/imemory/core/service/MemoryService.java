@@ -2,6 +2,8 @@ package cn.lichengwu.imemory.core.service;
 
 import cn.lichengwu.imemory.core.exception.PersistenceException;
 
+import java.io.Serializable;
+
 /**
  * memory access interface
  *
@@ -9,7 +11,7 @@ import cn.lichengwu.imemory.core.exception.PersistenceException;
  * @version 1.0
  * @created 2013-11-16 8:35 PM
  */
-public interface MemoryService<K, V> {
+public interface MemoryService<K extends Serializable, V> {
 
     /**
      * put a value to memory associate with the given key
@@ -19,7 +21,7 @@ public interface MemoryService<K, V> {
      *
      * @throws PersistenceException
      */
-    void put(K key, V value) throws PersistenceException;
+    void set(K key, V value) throws PersistenceException;
 
 
     /**

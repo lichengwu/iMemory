@@ -72,4 +72,5 @@ public class SerializerTest {
             Assert.assertEquals(objects.get(i), deList.get(i));
         }
     }
+
 }

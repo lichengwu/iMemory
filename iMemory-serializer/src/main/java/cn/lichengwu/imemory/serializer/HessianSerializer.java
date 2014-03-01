@@ -38,7 +38,7 @@ public class HessianSerializer implements Serializer {
         ByteArrayInputStream bais = new ByteArrayInputStream(source);
         HessianInput hi = new HessianInput(bais);
         hi.setSerializerFactory(serializerFactory);
-        return (T) hi.readObject(clazz);
+            return (T) hi.readObject(clazz);
     }
 
     public void close() throws IOException {

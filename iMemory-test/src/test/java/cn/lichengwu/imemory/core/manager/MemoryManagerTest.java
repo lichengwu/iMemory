@@ -38,11 +38,13 @@ public class MemoryManagerTest {
         long key = memoryManager.insert(buf);
         Assert.assertTrue(oldCapacity > memoryManager.capacity());
         byte[] newBuf = new byte[]{1, 2, 3, 4, 5};
-        //2. update
-        byte[] oldBuf = memoryManager.update(key, newBuf);
+        // remove
+        byte[] oldBuf = memoryManager.readAndDelete(key);
         for (int i = 0; i < buf.length; i++) {
             Assert.assertEquals(buf[i], oldBuf[i]);
         }
+        //2. update
+        key = memoryManager.insert(newBuf);
         //3. get
         oldBuf = memoryManager.get(key);
         for (int i = 0; i < newBuf.length; i++) {
