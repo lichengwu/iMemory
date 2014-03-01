@@ -102,12 +102,6 @@ public class FixSizeMemoryBuffer extends AbstractMemoryBuffer {
 
         // give back pointer to the stack
         freePointers.push(index);
-        root.position(index);
-
-        //erase data
-        for (int i = 0; i < sliceSize; i++) {
-            root.put(EMPTY_BYTE);
-        }
         // set used
         flags[index] = false;
         //set capacity

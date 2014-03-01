@@ -51,7 +51,7 @@ public class DefaultMemoryServiceTest {
     public void test() {
         try {
             // merge
-            testByStoragePolicy(StoragePolicy.MERGE);
+            //            testByStoragePolicy(StoragePolicy.MERGE);
             // fix size
             testByStoragePolicy(StoragePolicy.FIX_SIZE);
         } catch (Throwable e) {
@@ -88,8 +88,8 @@ public class DefaultMemoryServiceTest {
                 memoryService.clear();
             }
             config = new Config();
-            config.setMaximum(1024 * 1024).setStorageType(StorageType.DIRECT)
-                    .setByteOrder(ByteOrder.LITTLE_ENDIAN).setStoragePolicy(StoragePolicy.MERGE);
+            config.setMaximum(1024 * 1024).setStorageType(StorageType.DIRECT).setByteOrder(ByteOrder.LITTLE_ENDIAN)
+                    .setStoragePolicy(StoragePolicy.MERGE);
             memoryService = new DefaultMemoryService<>(config, SimpleObject.class);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
