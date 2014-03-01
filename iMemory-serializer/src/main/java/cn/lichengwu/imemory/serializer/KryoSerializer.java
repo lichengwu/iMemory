@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * A serializer using {@linkplain Kryo} lib.
  *
- * @author 佐井
+ * @author lichengwu
  * @version 1.0
  * @created 2013-11-12 10:35 PM
  */

@@ -5,7 +5,6 @@ import cn.lichengwu.imemory.core.exception.PersistenceException;
 import cn.lichengwu.imemory.core.manager.MemoryManager;
 import cn.lichengwu.imemory.serializer.Serializer;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -47,7 +46,7 @@ public class DefaultMemoryService<K extends Serializable, V> implements MemorySe
             if (oldPointer != null) {
                 readFirstIndex.put(key, pointer);
             }
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new PersistenceException(e);
         }
     }
@@ -60,10 +59,29 @@ public class DefaultMemoryService<K extends Serializable, V> implements MemorySe
                 return null;
             }
             byte[] data = memoryManager.get(pointer);
-            return serializer.deserialize(data, valueClass);
-        } catch (IOException e) {
+            V value = serializer.deserialize(data, valueClass);
+            memoryManager.delete(pointer);
+            return value;
+        } catch (Throwable e) {
             throw new PersistenceException(e);
         }
+    }
+
+    @Override
+    public void clear() {
+        writeFirstIndex.clear();
+        readFirstIndex.clear();
+        memoryManager.clear();
+    }
+
+    @Override
+    public long capacity() {
+        return memoryManager.capacity();
+    }
+
+    @Override
+    public long size() {
+        return writeFirstIndex.size() + readFirstIndex.size();
     }
 
     @Override
@@ -78,7 +96,7 @@ public class DefaultMemoryService<K extends Serializable, V> implements MemorySe
                 return null;
             }
             return serializer.deserialize(data, valueClass);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             throw new PersistenceException(e);
         }
 
@@ -122,11 +140,11 @@ public class DefaultMemoryService<K extends Serializable, V> implements MemorySe
 
         // Spread bits to regularize both segment and index locations,
         // using variant of single-word Wang/Jenkins hash.
-        h += (h <<  15) ^ 0xffffcd7d;
+        h += (h << 15) ^ 0xffffcd7d;
         h ^= (h >>> 10);
-        h += (h <<   3);
-        h ^= (h >>>  6);
-        h += (h <<   2) + (h << 14);
+        h += (h << 3);
+        h ^= (h >>> 6);
+        h += (h << 2) + (h << 14);
         return h ^ (h >>> 16);
     }
 

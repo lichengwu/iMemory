@@ -25,7 +25,7 @@ public class Config {
     private ByteOrder byteOrder;
 
     /**
-     * max size of the storage
+     * max size of the storage  in one buffer
      */
     private int maximum;
 
@@ -53,7 +53,6 @@ public class Config {
      * serializer
      */
     private Serializer serializer = KryoSerializer.getInstance();
-
 
     public StorageType getStorageType() {
         return storageType;
@@ -107,6 +106,15 @@ public class Config {
     public Config setSerializer(Serializer serializer) {
         this.serializer = serializer;
         return this;
+    }
+
+    /**
+     * real maximum in all buffer.
+     *
+     * @return {@code maximum} * {@code concurrentLevel}
+     */
+    public int getRealMaximum() {
+        return maximum * concurrentLevel;
     }
 
     public StoragePolicy getStoragePolicy() {

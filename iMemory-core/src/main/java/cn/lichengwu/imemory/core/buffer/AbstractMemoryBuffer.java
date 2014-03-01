@@ -26,7 +26,7 @@ public abstract class AbstractMemoryBuffer implements MemoryBuffer {
         // init root buffer
         initRoot(config);
         // set size
-        this.maximum = config.getMaximum();
+        this.maximum =  config.getMaximum();
         this.capacity = maximum();
     }
 
@@ -36,12 +36,13 @@ public abstract class AbstractMemoryBuffer implements MemoryBuffer {
      * @param config
      */
     protected void initRoot(Config config) {
+        int maximum = config.getMaximum();
         switch (config.getStorageType()) {
             case HEAP:
-                root = ByteBuffer.allocate(config.getMaximum());
+                root = ByteBuffer.allocate(maximum);
                 break;
             case DIRECT:
-                root = ByteBuffer.allocateDirect(config.getMaximum());
+                root = ByteBuffer.allocateDirect(maximum);
                 break;
             case DISK:
                 // TODO

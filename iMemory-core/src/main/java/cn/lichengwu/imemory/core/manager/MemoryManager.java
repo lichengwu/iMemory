@@ -38,8 +38,12 @@ public class MemoryManager {
         this.concurrentLevel = config.getConcurrentLevel();
         this.memoryBufferSegments = new MemoryBuffer[concurrentLevel];
         this.segmentLocks = new ReentrantLock[concurrentLevel];
-        int maximum = config.getMaximum() / concurrentLevel + 1;
-        config.setMaximum(maximum);
+        //        long maximum = config.getMaximum() / concurrentLevel + 1;
+        //        if (maximum > Integer.MAX_VALUE) {
+        //            throw new IllegalArgumentException("can not create buffer, config's maximum is too larger. " +
+        //                    "Try to decrease the maximum or enlarge concurrent level in config.");
+        //        }
+        //        config.setMaximum(maximum);
         for (int i = 0; i < concurrentLevel; i++) {
             //new lock
             segmentLocks[i] = new ReentrantLock();

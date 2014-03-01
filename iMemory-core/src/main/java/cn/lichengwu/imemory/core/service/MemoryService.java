@@ -43,4 +43,21 @@ public interface MemoryService<K extends Serializable, V> {
      * @throws PersistenceException
      */
     V del(K key) throws PersistenceException;
+
+    /**
+     * clean all data in this service
+     *
+     * @throws PersistenceException
+     */
+    void clear() throws PersistenceException;
+
+    /**
+     * @see cn.lichengwu.imemory.core.manager.MemoryManager#capacity()
+     */
+    long capacity();
+
+    /**
+     * @return the item count in this service
+     */
+    long size();
 }
